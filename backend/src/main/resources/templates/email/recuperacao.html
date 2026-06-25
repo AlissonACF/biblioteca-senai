@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recuperação de Senha</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 15px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px 35px;
+      text-align: center;
+    }
+
+    .content h2 {
+      color: #111827;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .content p {
+      color: #6b7280;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .code-box {
+      background: #eff6ff;
+      border: 2px dashed #2563eb;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+
+    .code {
+      font-size: 42px;
+      letter-spacing: 10px;
+      color: #1e40af;
+      font-weight: bold;
+    }
+
+    .info {
+      font-size: 13px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    .footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #9ca3af;
+      background: #fafafa;
+    }
+
+    @media (max-width: 500px) {
+      .content {
+        padding: 30px 20px;
+      }
+
+      .code {
+        font-size: 32px;
+        letter-spacing: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <h1>Recuperação de Senha</h1>
+      <p>Solicitação de redefinição de acesso</p>
+    </div>
+
+    <div class="content">
+      <h2>Seu código de recuperação</h2>
+
+      <p>
+        Utilize o código abaixo para continuar o processo de redefinição da sua senha.
+      </p>
+
+      <div class="code-box">
+        <div class="code">482913</div>
+      </div>
+
+      <p class="info">
+        Este código expira em 10 minutos.<br>
+        Caso você não tenha solicitado a recuperação de senha,
+        ignore este e-mail.
+      </p>
+    </div>
+
+    <div class="footer">
+      © 2026 Sua Empresa. Todos os direitos reservados.
+    </div>
+
+  </div>
+
+</body>
+</html>
