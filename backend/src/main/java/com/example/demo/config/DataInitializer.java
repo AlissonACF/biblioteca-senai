@@ -32,40 +32,20 @@ public class DataInitializer {
         RecursoBibliotecaRepository recursoRepository
     ) {
         return args -> {
-            usuarioRepository.findByEmail("admin@senai.br").ifPresentOrElse(
-                admin -> {
-                    admin.setNome(admin.getNome() == null || admin.getNome().isBlank() ? "Administrador SENAI" : admin.getNome());
-                    admin.setNivelAcesso(NivelAcesso.ADMIN);
-                    admin.setSenha(passwordEncoder.encode("admin123"));
-                    usuarioRepository.save(admin);
-                },
-                () -> {
-                    Usuario admin = new Usuario();
-                    admin.setNome("Administrador SENAI");
-                    admin.setEmail("admin@senai.br");
-                    admin.setNivelAcesso(NivelAcesso.ADMIN);
-                    admin.setSenha(passwordEncoder.encode("admin123"));
-                    usuarioRepository.save(admin);
-                    System.out.println("Usuario ADMIN criado: admin@senai.br / admin123");
-                }
+            upsertDefaultUser(
+                usuarioRepository,
+                "admin@senai.br",
+                "Administrador SENAI",
+                "admin123",
+                NivelAcesso.ADMIN
             );
 
-            usuarioRepository.findByEmail("aluno@senai.br").ifPresentOrElse(
-                aluno -> {
-                    aluno.setNome(aluno.getNome() == null || aluno.getNome().isBlank() ? "Aluno Teste" : aluno.getNome());
-                    aluno.setNivelAcesso(NivelAcesso.PADRAO);
-                    aluno.setSenha(passwordEncoder.encode("aluno123"));
-                    usuarioRepository.save(aluno);
-                },
-                () -> {
-                    Usuario aluno = new Usuario();
-                    aluno.setNome("Aluno Teste");
-                    aluno.setEmail("aluno@senai.br");
-                    aluno.setNivelAcesso(NivelAcesso.PADRAO);
-                    aluno.setSenha(passwordEncoder.encode("aluno123"));
-                    usuarioRepository.save(aluno);
-                    System.out.println("Usuario aluno criado: aluno@senai.br / aluno123");
-                }
+            upsertDefaultUser(
+                usuarioRepository,
+                "aluno@senai.br",
+                "Aluno Teste",
+                "aluno123",
+                NivelAcesso.PADRAO
             );
 
             if (recursoRepository != null && recursoRepository.findAll().isEmpty()) {
@@ -92,23 +72,21 @@ public class DataInitializer {
 
     public CommandLineRunner initDatabase(UsuarioRepository usuarioRepository) {
         return args -> {
-            if (usuarioRepository.count() > 0) {
-                return;
-            }
+            upsertDefaultUser(
+                usuarioRepository,
+                "admin@senai.br",
+                "Administrador SENAI",
+                "admin123",
+                NivelAcesso.ADMIN
+            );
 
-            Usuario admin = new Usuario();
-            admin.setNome("Administrador SENAI");
-            admin.setEmail("admin@senai.br");
-            admin.setNivelAcesso(NivelAcesso.ADMIN);
-            admin.setSenha(passwordEncoder.encode("123456789"));
-            usuarioRepository.save(admin);
-
-            Usuario aluno = new Usuario();
-            aluno.setNome("Aluno Teste");
-            aluno.setEmail("aluno@senai.br");
-            aluno.setNivelAcesso(NivelAcesso.PADRAO);
-            aluno.setSenha(passwordEncoder.encode("user123"));
-            usuarioRepository.save(aluno);
+            upsertDefaultUser(
+                usuarioRepository,
+                "aluno@senai.br",
+                "Aluno Teste",
+                "aluno123",
+                NivelAcesso.PADRAO
+            );
         };
     }
 
@@ -137,5 +115,31 @@ public class DataInitializer {
                 postoRepository.save(posto);
             }
         };
+    }
+
+    private void upsertDefaultUser(
+        UsuarioRepository usuarioRepository,
+        String email,
+        String nome,
+        String senha,
+        NivelAcesso nivelAcesso
+    ) {
+        Usuario usuario = usuarioRepository.findAnyByEmail(email).orElseGet(Usuario::new);
+        boolean novo = usuario.getId() == null;
+
+        usuario.setEmail(email);
+        usuario.setNome(usuario.getNome() == null || usuario.getNome().isBlank() ? nome : usuario.getNome());
+        usuario.setNivelAcesso(nivelAcesso);
+        usuario.setSenha(passwordEncoder.encode(senha));
+        usuario.setAtivo(true);
+        usuario.setDeletedAt(null);
+
+        usuarioRepository.save(usuario);
+
+        if (novo) {
+            System.out.println("Usuario criado: " + email + " / " + senha);
+        } else {
+            System.out.println("Usuario padrao atualizado: " + email + " / " + senha);
+        }
     }
 }

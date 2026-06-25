@@ -3,7 +3,6 @@ package com.example.demo.config;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,9 +46,8 @@ class ConfigBeansTest {
     void deveInicializarUsuariosQuandoBancoVazio() throws Exception {
         DataInitializer initializer = new DataInitializer(passwordEncoder);
         CommandLineRunner runner = initializer.initDatabase(usuarioRepository);
-        when(usuarioRepository.count()).thenReturn(0L);
-        when(passwordEncoder.encode("123456789")).thenReturn("admin-hash");
-        when(passwordEncoder.encode("user123")).thenReturn("user-hash");
+        when(passwordEncoder.encode("admin123")).thenReturn("admin-hash");
+        when(passwordEncoder.encode("aluno123")).thenReturn("aluno-hash");
 
         runner.run();
 
@@ -57,14 +55,32 @@ class ConfigBeansTest {
     }
 
     @Test
-    void naoDeveInicializarUsuariosQuandoJaExistem() throws Exception {
+    void deveAtualizarUsuariosPadraoQuandoJaExistem() throws Exception {
         DataInitializer initializer = new DataInitializer(passwordEncoder);
         CommandLineRunner runner = initializer.initDatabase(usuarioRepository);
-        when(usuarioRepository.count()).thenReturn(1L);
+        Usuario admin = new Usuario();
+        admin.setEmail("Admin@SENAI.br");
+        admin.setSenha("senha-antiga");
+        admin.setAtivo(false);
+        Usuario aluno = new Usuario();
+        aluno.setEmail("Aluno@SENAI.br");
+        aluno.setSenha("senha-antiga");
+        aluno.setAtivo(false);
+
+        when(usuarioRepository.findAnyByEmail("admin@senai.br")).thenReturn(java.util.Optional.of(admin));
+        when(usuarioRepository.findAnyByEmail("aluno@senai.br")).thenReturn(java.util.Optional.of(aluno));
+        when(passwordEncoder.encode("admin123")).thenReturn("admin-hash");
+        when(passwordEncoder.encode("aluno123")).thenReturn("aluno-hash");
 
         runner.run();
 
-        verify(usuarioRepository, never()).save(org.mockito.Mockito.any(Usuario.class));
+        verify(usuarioRepository, org.mockito.Mockito.times(2)).save(org.mockito.Mockito.any(Usuario.class));
+        assertEquals("admin@senai.br", admin.getEmail());
+        assertEquals("admin-hash", admin.getSenha());
+        assertEquals(true, admin.isAtivo());
+        assertEquals("aluno@senai.br", aluno.getEmail());
+        assertEquals("aluno-hash", aluno.getSenha());
+        assertEquals(true, aluno.isAtivo());
     }
 
     @Test

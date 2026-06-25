@@ -11,10 +11,16 @@ public interface UsuarioRepository extends BaseRepository<Usuario, Long> {
 
     @Query("""
             SELECT u FROM Usuario u
-            WHERE u.email = :email
+            WHERE LOWER(u.email) = LOWER(:email)
             AND u.ativo = TRUE
     """)
     Optional<Usuario> findByEmail(String email);
+
+    @Query("""
+            SELECT u FROM Usuario u
+            WHERE LOWER(u.email) = LOWER(:email)
+    """)
+    Optional<Usuario> findAnyByEmail(String email);
 
     @Query("""
             SELECT u FROM Usuario u

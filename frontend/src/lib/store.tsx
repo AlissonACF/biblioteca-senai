@@ -13,7 +13,11 @@ import type {
   User,
 } from "./types";
 
-const API_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+function normalizeApiUrl(url: string | undefined) {
+  return (url ?? "").replace(/\/$/, "").replace(/\/(?:api|auth)$/i, "");
+}
+
+const API_URL = import.meta.env.DEV ? "" : normalizeApiUrl(import.meta.env.VITE_API_URL);
 const SESSION_KEY = "senai-biblioteca-session-v2";
 
 interface State {
