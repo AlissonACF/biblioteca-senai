@@ -3,7 +3,10 @@ package com.example.demo.controller;
 import java.security.Principal;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.annotations.Admin;
 import com.example.demo.dto.BibliotecaDtos.BootstrapResponse;
@@ -125,7 +129,15 @@ public class BibliotecaController {
     }
 
     private Usuario currentUser(Principal principal) {
-        return service.findCurrentUser(principal.getName());
+        String email = principal == null ? null : principal.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((email == null || email.isBlank()) && authentication != null) {
+            email = authentication.getName();
+        }
+        if (email == null || email.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario nao autenticado.");
+        }
+        return service.findCurrentUser(email);
     }
 
     private Long parseId(String raw, String prefix) {

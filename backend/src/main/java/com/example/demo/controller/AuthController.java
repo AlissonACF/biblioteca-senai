@@ -42,7 +42,7 @@ public class AuthController {
     @PostMapping("/login")
     @Public
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO dto) {
-        String identificador = dto.getEmail();
+        String identificador = dto.getEmail() == null ? "" : dto.getEmail().trim();
         String senha = dto.getSenha();
 
         Optional<Usuario> usuarioOpt;
@@ -52,7 +52,7 @@ public class AuthController {
         } else if (!identificador.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             return ResponseEntity.badRequest().body("Identificador invalido!");
         } else {
-            usuarioOpt = usuarioRepository.findByEmail(identificador);
+            usuarioOpt = usuarioRepository.findByEmail(identificador.toLowerCase());
         }
 
         if (usuarioOpt.isPresent() && passwordEncoder.matches(senha, usuarioOpt.get().getSenha())) {

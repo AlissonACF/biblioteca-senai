@@ -13,7 +13,7 @@ import type {
   User,
 } from "./types";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const API_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 const SESSION_KEY = "senai-biblioteca-session-v2";
 
 interface State {
@@ -40,7 +40,7 @@ async function readError(response: Response) {
   if (!text) return "Operacao falhou.";
   try {
     const json = JSON.parse(text);
-    return json.message ?? json.error ?? text;
+    return json.message ?? json.detail ?? json.error ?? text;
   } catch {
     return text;
   }

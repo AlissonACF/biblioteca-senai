@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.example.demo.entity.Posto;
 import com.example.demo.entity.Usuario;
@@ -36,8 +36,8 @@ class ConfigBeansTest {
 
     @Test
     void deveCriarBeansDeCorsSwaggerESecurity() {
-        CorsFilter corsFilter = new CorsConfig().corsFilter();
-        assertNotNull(corsFilter);
+        CorsConfigurationSource corsConfigurationSource = new CorsConfig().corsConfigurationSource();
+        assertNotNull(corsConfigurationSource);
         assertNotNull(new SwaggerConfig().customOpenAPI());
         assertNotNull(new SecurityConfig().passwordEncoder());
         assertDoesNotThrow(() -> new SwaggerStartupListener().onStart());
